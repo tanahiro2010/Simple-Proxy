@@ -1,5 +1,6 @@
 import { RequestHeader } from 'hono/utils/headers';
-import { rendring } from './utils/rendring';
+import { htmlRendring } from './utils/html-rendring';
+import { jsRendring } from './utils/js-rendring';
 import { Hono } from 'hono'
 
 interface Env {
@@ -51,8 +52,12 @@ app.get('/', async (c) => {
     headers
   });
 
-  if (response.headers.get('Content-Type')?.includes('html')) {
-    return await rendring(response, host);
+  const contentType: string = (response.headers.get('Content-Type') ?? "").toLowerCase();
+
+  if (contentType.includes('html')) {
+    return await htmlRendring(response, host);
+  } else if (contentType.includes('javascript')) {
+    return new Response(jsRendring(await response.text(), host), response);
   }
 
   return new Response(response.body, response);
@@ -74,8 +79,12 @@ app.post('/', async (c) => {
     response.headers.set('Location', `/?url=${location.href}`);
   }
 
-  if (response.headers.get('Content-Type')?.includes('html')) {
-    return await rendring(response, host);
+  const contentType: string = (response.headers.get('Content-Type') ?? "").toLowerCase();
+
+  if (contentType.includes('html')) {
+    return await htmlRendring(response, host);
+  } else if (contentType.includes('javascript')) {
+    return new Response(jsRendring(await response.text(), host), response);
   }
 
   return new Response(response.body, response);

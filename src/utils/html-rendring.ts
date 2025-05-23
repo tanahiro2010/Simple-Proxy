@@ -32,7 +32,7 @@ const otherItems: [string, string, string][] = [
     ['[name="location"]', 'name', 'value']
 ];
 
-async function rendring(response: Response, host: string) {
+async function htmlRendring(response: Response, host: string) {
     const text = await response.text();
     const $ = load(text);
     linkRelatedAttributes.forEach((item: string) => {
@@ -62,4 +62,4 @@ async function rendring(response: Response, host: string) {
     return new Response($.html(), response);
 }
 
-export { rendring };
+export { htmlRendring };
